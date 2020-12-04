@@ -42,14 +42,13 @@ type IndexFileItem struct {
 }
 
 type HTTPStaticServer struct {
-	Root            string
-	Upload          bool
-	Delete          bool
-	Title           string
-	Theme           string
-	PlistProxy      string
-	GoogleTrackerID string
-	AuthType        string
+	Root       string
+	Upload     bool
+	Delete     bool
+	Title      string
+	Theme      string
+	PlistProxy string
+	AuthType   string
 
 	indexes []IndexFileItem
 	m       *mux.Router

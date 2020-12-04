@@ -24,23 +24,22 @@ import (
 )
 
 type Configure struct {
-	Conf            *os.File `yaml:"-"`
-	Addr            string   `yaml:"addr"`
-	Port            int      `yaml:"port"`
-	Root            string   `yaml:"root"`
-	HTTPAuth        string   `yaml:"httpauth"`
-	Cert            string   `yaml:"cert"`
-	Key             string   `yaml:"key"`
-	Cors            bool     `yaml:"cors"`
-	Theme           string   `yaml:"theme"`
-	XHeaders        bool     `yaml:"xheaders"`
-	Upload          bool     `yaml:"upload"`
-	Delete          bool     `yaml:"delete"`
-	PlistProxy      string   `yaml:"plistproxy"`
-	Title           string   `yaml:"title"`
-	Debug           bool     `yaml:"debug"`
-	GoogleTrackerID string   `yaml:"google-tracker-id"`
-	Auth            struct {
+	Conf       *os.File `yaml:"-"`
+	Addr       string   `yaml:"addr"`
+	Port       int      `yaml:"port"`
+	Root       string   `yaml:"root"`
+	HTTPAuth   string   `yaml:"httpauth"`
+	Cert       string   `yaml:"cert"`
+	Key        string   `yaml:"key"`
+	Cors       bool     `yaml:"cors"`
+	Theme      string   `yaml:"theme"`
+	XHeaders   bool     `yaml:"xheaders"`
+	Upload     bool     `yaml:"upload"`
+	Delete     bool     `yaml:"delete"`
+	PlistProxy string   `yaml:"plistproxy"`
+	Title      string   `yaml:"title"`
+	Debug      bool     `yaml:"debug"`
+	Auth       struct {
 		Type   string `yaml:"type"` // openid|http|github
 		OpenID string `yaml:"openid"`
 		HTTP   string `yaml:"http"`
@@ -95,7 +94,6 @@ func parseFlags() error {
 	gcfg.Theme = "black"
 	gcfg.PlistProxy = defaultPlistProxy
 	gcfg.Auth.OpenID = defaultOpenID
-	gcfg.GoogleTrackerID = "UA-81205425-2"
 	gcfg.Title = "Go HTTP File Server"
 
 	kingpin.HelpFlag.Short('h')
@@ -117,7 +115,6 @@ func parseFlags() error {
 	kingpin.Flag("debug", "enable debug mode").BoolVar(&gcfg.Debug)
 	kingpin.Flag("plistproxy", "plist proxy when server is not https").Short('p').StringVar(&gcfg.PlistProxy)
 	kingpin.Flag("title", "server title").StringVar(&gcfg.Title)
-	kingpin.Flag("google-tracker-id", "set to empty to disable it").StringVar(&gcfg.GoogleTrackerID)
 
 	kingpin.Parse() // first parse conf
 
@@ -147,7 +144,6 @@ func main() {
 	ss := NewHTTPStaticServer(gcfg.Root)
 	ss.Theme = gcfg.Theme
 	ss.Title = gcfg.Title
-	ss.GoogleTrackerID = gcfg.GoogleTrackerID
 	ss.Upload = gcfg.Upload
 	ss.Delete = gcfg.Delete
 	ss.AuthType = gcfg.Auth.Type
@@ -163,7 +159,7 @@ func main() {
 	if ss.PlistProxy != "" {
 		log.Printf("plistproxy: %s", strconv.Quote(ss.PlistProxy))
 	}
-	
+
 	var hdlr http.Handler = ss
 
 	hdlr = accesslog.NewLoggingHandler(hdlr, logger)
