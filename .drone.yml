@@ -1,0 +1,56 @@
+kind: pipeline
+type: docker
+name: tests
+
+steps:
+- name: unit-test
+  image: golang
+  volumes:
+  - name: cache
+    path: /go
+  commands:
+  - go test -coverprofile=coverage.out -covermode=count ./...
+  - go tool cover -func=coverage.out | grep total
+
+- name: race-test
+  image: golang
+  volumes:
+  - name: cache
+    path: /go
+  commands:
+  - go test -race ./...
+
+volumes:
+- name: cache
+  temp: {}
+
+---
+kind: pipeline
+name: docker
+
+steps:
+- name: docker
+  image: plugins/docker
+  settings:
+    registry: docker.pkg.github.com
+    username: hamburghammer
+    password:
+      from_secret: DOCKER_REGISTRY_KEY
+    repo: docker.pkg.github.com/hamburghammer/gohttpserver/gohttpserver
+    dockerfile: docker/Dockerfile
+    auto_tag: true
+
+- name: docker-armhf
+  image: plugins/docker
+  settings:
+    registry: docker.pkg.github.com
+    username: hamburghammer
+    password:
+      from_secret: DOCKER_REGISTRY_KEY
+    repo: docker.pkg.github.com/hamburghammer/gohttpserver/gohttpserver
+    dockerfile: docker/Dockerfile.armhf
+    auto_tag: true
+    auto_tag_suffix: armhf
+
+depends_on:
+  - tests
