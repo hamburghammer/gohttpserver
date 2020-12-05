@@ -40,17 +40,5 @@ steps:
     dockerfile: docker/Dockerfile
     auto_tag: true
 
-- name: docker-armhf
-  image: plugins/docker
-  settings:
-    registry: docker.pkg.github.com
-    username: hamburghammer
-    password:
-      from_secret: DOCKER_REGISTRY_KEY
-    repo: docker.pkg.github.com/hamburghammer/gohttpserver/gohttpserver
-    dockerfile: docker/Dockerfile.armhf
-    auto_tag: true
-    auto_tag_suffix: armhf
-
 depends_on:
   - tests
